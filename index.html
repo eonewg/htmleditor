@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell" data-theme="dark">
+    <header class="topbar" id="topbar">
+      <div class="brand">
+        <span class="brand-mark">H</span>
+        <div>
+          <strong>HTML Studio</strong>
+          <span id="fileName">未命名文档</span>
+        </div>
+      </div>
+
+      <nav class="toolbar" aria-label="文件操作">
+        <button type="button" data-action="new" title="新建 (Ctrl+N)">新建</button>
+        <button type="button" data-action="open" title="打开 (Ctrl+O)">打开</button>
+        <button type="button" data-action="save" title="保存 (Ctrl+S)">保存</button>
+        <button type="button" data-action="undo" id="undoBtn" title="撤销 (Ctrl+Z)" disabled>撤销</button>
+        <button type="button" data-action="export-clean" title="导出当前源码为纯 HTML">纯HTML</button>
+        <button type="button" data-action="export-styled" title="导出补齐文档结构的 HTML">完整文档</button>
+        <button type="button" data-action="format" title="格式化 (Ctrl+Shift+F)">格式化</button>
+      </nav>
+
+      <nav class="toolbar compact mode-action-toolbar" aria-label="当前模式编辑工具">
+        <div class="source-insert-toolbar" aria-label="源码模式插入 HTML 元素">
+          <button type="button" data-insert="h1" title="插入标题">标题</button>
+          <button type="button" data-insert="section" title="插入区块">小标题</button>
+          <button type="button" data-insert="p" title="插入段落">正文</button>
+          <button type="button" class="tool-placeholder" disabled aria-hidden="true">B</button>
+          <button type="button" class="tool-placeholder" disabled aria-hidden="true">I</button>
+          <button type="button" data-insert="ul" title="插入列表">列表</button>
+          <button type="button" data-insert="table" title="插入表格">编号</button>
+          <button type="button" data-insert="a" title="插入链接">链接</button>
+          <button type="button" data-insert="img" title="插入图片">图片</button>
+        </div>
+        <div class="visual-toolbar" id="visualToolbar" aria-label="可视化编辑工具">
+          <button type="button" data-rich="h1" title="一级标题">标题</button>
+          <button type="button" data-rich="h2" title="二级标题">小标题</button>
+          <button type="button" data-rich="p" title="正文段落">正文</button>
+          <button type="button" data-rich="bold" title="加粗 (Ctrl+B)">B</button>
+          <button type="button" data-rich="italic" title="斜体 (Ctrl+I)">I</button>
+          <button type="button" data-rich="ul" title="项目列表">列表</button>
+          <button type="button" data-rich="ol" title="编号列表">编号</button>
+          <button type="button" data-rich="link" title="插入链接">链接</button>
+          <button type="button" data-rich="image" title="插入图片">图片</button>
+        </div>
+      </nav>
+
+      <div class="toolbar right-tools">
+        <button type="button" id="foldBtn" class="source-only-tool" title="折叠或展开光标所在标签">折叠</button>
+        <button type="button" id="themeBtn" class="icon-button theme-toggle" title="切换到浅色主题" aria-label="切换到浅色主题">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true"></span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true"></span>
+        </button>
+        <button type="button" id="focusBtn" title="无干扰模式 (F11)">专注</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="pane editor-pane" aria-label="HTML 代码编辑区">
+        <div class="pane-head editor-head">
+          <div class="editor-title">
+            <strong>代码</strong>
+            <span id="cursorInfo">Ln 1, Col 1</span>
+          </div>
+          <div class="editor-head-tools">
+            <div class="segmented mode-toggle" aria-label="编辑模式">
+              <button type="button" class="active" data-editor-mode="source">源码</button>
+              <button type="button" data-editor-mode="clean">可视化</button>
+            </div>
+            <div class="status-row editor-status">
+              <span id="matchInfo">标签匹配就绪</span>
+              <span id="saveState">已自动保存</span>
+            </div>
+          </div>
+        </div>
+        <div class="editor-wrap" id="editorWrap">
+          <div id="visualEditor" class="visual-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="可视化 HTML 编辑画布"></div>
+          <div class="line-numbers" id="lineNumbers" aria-hidden="true"></div>
+          <pre class="highlight-layer" id="highlightLayer" aria-hidden="true"></pre>
+          <textarea id="editor" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="HTML 源代码"></textarea>
+          <div class="completion" id="completion" hidden></div>
+        </div>
+      </section>
+
+      <div class="splitter" id="splitter" role="separator" aria-label="调整编辑器和预览区域宽度" aria-orientation="vertical" tabindex="0">
+        <span aria-hidden="true"></span>
+      </div>
+
+      <section class="pane preview-pane" aria-label="HTML 实时预览区">
+        <div class="pane-head">
+          <div>
+            <strong>预览</strong>
+            <span id="previewState">实时渲染</span>
+          </div>
+          <div class="segmented" aria-label="响应式预览尺寸">
+            <button type="button" class="active" data-device="desktop">桌面</button>
+            <button type="button" data-device="tablet">平板</button>
+            <button type="button" data-device="mobile">手机</button>
+          </div>
+        </div>
+        <div class="preview-stage" id="previewStage">
+          <iframe id="preview" title="HTML 实时预览" sandbox="allow-same-origin allow-forms allow-modals allow-popups allow-scripts"></iframe>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bottombar">
+      <span id="docStats">0 字符</span>
+      <span>Ctrl+S 保存 · Ctrl+O 打开 · Ctrl+Shift+F 格式化 · Tab 补全/缩进</span>
+    </footer>
+
+    <button type="button" class="focus-exit" id="focusExitBtn" title="退出无干扰模式 (Esc/F11)">退出专注</button>
+    <input id="fileInput" type="file" accept=".html,.htm,text/html" hidden>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
