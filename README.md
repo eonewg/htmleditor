@@ -1,5 +1,7 @@
 # HTML Studio
 
+[English](README.md) | [中文](README.zh-CN.md)
+
 A lightweight browser-based HTML editor with source editing, visual editing, and live preview.
 
 ## Features
